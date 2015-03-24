@@ -141,31 +141,7 @@ codeif(NODE * t)
    printf("IFEND%d\n",ln);
 }
 
-codewhile(NODE * t)
-{  int ln;
-   ln = labno;
-   labno++;
-   printf("WLOOP%d\n",ln);
-   codeexp(0,t->f.b.n1);
-   printf("\tB%s WEND%d\n",notComp(t->f.b.n1->tag),ln);
-   codetree(t->f.b.n2);
-   printf("\tB WLOOP%d\n",ln);
-   printf("WEND%d\n",ln);
-}
 
-// TO DO: need to check
-// essentially WHILE loop but do not turn
-coderepeat(NODE * t)
-{  int ln;
-   ln = labno; 
-   labno++;
-   printf("RLOOP%d\n",ln);
-   codeexp(0,t->f.b.n1);
-   printf("\tB%s REND%d\n",showSymb(t->f.b.n1->tag),ln);
-   codetree(t->f.b.n2);
-   printf("\tB RLOOP%d\n",ln);
-   printf("REND%d\n",ln);
-}
 
 codeblock(NODE * t)
 {  int rb1;

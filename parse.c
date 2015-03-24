@@ -18,7 +18,7 @@ lex()
 {  
    printSymb();
    symb = yylex();
-   printf("\nyytext=%s\n", yytext);
+   //printf("\nyytext=%s\n", yytext);
 }
 
 NODE * newInt(int v)
@@ -103,12 +103,19 @@ NODE * program()
       error("end", "end expected");
   
    lex();
-	printf("name=%s\n",name);
+   if(symb!=ID)
+	   error("ID", "name expected");
    if(strcmp(yytext, name)){
-       return p;
+	   
    }else{
       error("name", "correct name expected");
    }
+   lex();
+   if(symb==SEMI){
+   }else{
+		error("SEMI", "; expected");
+   }
+   return p; 
 }
 
 NODE * defs()
