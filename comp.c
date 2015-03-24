@@ -181,7 +181,8 @@ codetree(NODE * t)
 {  if(t==NULL)
     return;
    switch(t->tag)
-   {  case SEMI: codetree(t->f.b.n1);
+   {  
+      case SEMI: codetree(t->f.b.n1);
                  codetree(t->f.b.n2);
                  return;
       case ASSIGN: codeassign(t);
@@ -189,7 +190,11 @@ codetree(NODE * t)
                    return; 
       case IF: codeif(t);
                return;
-      case TBEGIN: codeblock(t->f.b.n1);
+      case PROCEDURE:
+                  return;
+      case ID: return;
+      case IS: codeblock(t->f.b.n1);
+      case TBEGIN: codeblock(t->f.b.n2);
                   return;
       default: codeerror(t,"unknown construct");
                exit(0);

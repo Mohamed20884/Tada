@@ -8,4 +8,4 @@ begin
  if x < y then
  z := 0;
  end if
-end Program;
+end Programs;

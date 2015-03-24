@@ -77,11 +77,9 @@ NODE * program()
    NODE * p;
    p = newNode(SEMI);
    char * name ;
-   if(symb==PROCEDURE){
-
-   }else{
+   if(symb!=PROCEDURE)
       error("procedure", "expected procedure");
-   }
+   
    lex();
    if(symb==ID){
       p->f.b.n1 = newId(yytext);
@@ -91,27 +89,21 @@ NODE * program()
       error("name", "name expected");
    }
    lex();
-   if(symb==IS){
-   
-   }else{
+   if(symb!=IS)
       error("is", "is expected");
-   }
+   
    lex();
    p->f.b.n2 = defs();
-   if(symb==TBEGIN){
-
-   }else{
+   if(symb!=TBEGIN)
       error("begin", "begin expected");
-   }
+      
    lex();
    p->f.b.n3 = commands();
-   if(symb==END){
-
-   }else{
+   if(symb!=END)
       error("end", "end expected");
-   }
+  
    lex();
-printf("name=%s\n",name);
+	printf("name=%s\n",name);
    if(strcmp(yytext, name)){
        return p;
    }else{
@@ -218,6 +210,7 @@ NODE * ifComm()
     error("if","then expected\n");
    lex();
    t = command();
+   lex();
    if(symb==ELSE)
    {  lex();
       c->f.b.n2 = newNode(ELSE);
