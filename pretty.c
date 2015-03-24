@@ -95,22 +95,10 @@ prettytree(NODE * t,int d)
 {  switch(t->tag)
    {  case SEMI: prettyseq(t,d);
                  return;
-      case VAR: prettyvar(t,d);
-                return;
       case ASSIGN: prettyassign(t,d);
                    return; 
       case IF: prettyif(t,d);
                return;
-      case WHILE: prettywhile(t,d);
-                  return;
-      case REPEAT: prettyrepeat(t,d);
-                  return;
-      case TBEGIN: prettyblock(t,d);
-                  return;
-      case INPUT: prettyinput(t,d);
-                  return;
-      case PRINT: prettyprint(t,d);
-                  return;
       case ID: printf("%s",t->f.id);
                return;
       case INT: printf("%d",t->f.value);

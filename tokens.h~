@@ -1,6 +1,6 @@
 #define PROCEDURE 9
 #define IS 1
-#define TBEGIN 2
+#define BEGIN 2
 #define END 3
 #define INT 4
 #define IF 5

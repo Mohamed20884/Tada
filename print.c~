@@ -9,7 +9,7 @@ char * showSymb(int symb)
 {  switch(symb)
    {  case  PROCEDURE: return "PROCEDURE";
       case  IS: return "IS";
-      case  DEF_INT: return "DEF_INT";
+      case  DEF_INT return "DEF_INT";
       case  TBEGIN: return "BEGIN";
       case  ELSE: return "ELSE";
       case  END: return "END";

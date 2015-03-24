@@ -12,12 +12,12 @@ IDENT	[a-zA-Z][A-Za-z0-9]*
 "procedure" 		{ return PROCEDURE;}
 "is" 			{ return IS;}
 "begin"			{ return TBEGIN;}
-"end if"		{ return ENDIF;}
 "end"			{ return END;}
 ": Integer"		{ return DEF_INT;}
 "if"			{ return IF;}
 "then"			{ return THEN;}
 "else"			{ return ELSE;}
+"end if"		{ return ENDIF;}
 "for" 			{ return FOR;}
 "in"  			{ return IN;}
 "loop" 			{ return LOOP;}

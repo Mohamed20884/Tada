@@ -189,7 +189,7 @@ codetree(NODE * t)
                    return; 
       case IF: codeif(t);
                return;
-      case TBEGIN: codeblock(t->f.b.n1);
+      case BEGIN: codeblock(t->f.b.n1);
                   return;
       default: codeerror(t,"unknown construct");
                exit(0);

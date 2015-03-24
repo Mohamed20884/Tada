@@ -84,7 +84,7 @@ NODE * program()
    }
    lex();
    if(symb==ID){
-      p->f.b.n1 = newId(yytext);
+      p->f.b.n1 = newNode(yytext);
       name=(char *)malloc(strlen(yytext) * sizeof(char));
       name=yytext;
    }else{

@@ -1,0 +1,12 @@
+VAR N;
+VAR S;
+S := 0;
+INPUT N;
+WHILE N!=0 DO
+BEGIN
+     S := S+N;
+     INPUT N
+END;
+PRINT S
+
+
