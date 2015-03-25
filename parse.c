@@ -259,7 +259,7 @@ NODE * ifComm()
     if(symb!=LOOP)
       error("LOOP", "LOOP expected");
     lex();
-    f->f.b.n1 = command();
+    f->f.b.n1 = commands();
     lex();
     if(symb!=ENDLOOP)
       error("ENDLOOP", "end loop expected");
