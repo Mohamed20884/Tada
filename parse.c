@@ -240,12 +240,10 @@ NODE * ifComm()
     NODE * f;
     NODE * n;
     f = newNode(FOR);
-    if(symb!=FOR)
-     error("for","for expected\n");
-    lex();
     if(symb!=ID)
       error("ID", "identifier expected");
     f->f.b.n1 = newId(yytext);
+    lex();
     if(symb!=IN)
       error("IN", "IN expected");
     lex();
