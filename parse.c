@@ -243,6 +243,7 @@ NODE * ifComm()
     if(symb!=ID)
       error("ID", "identifier expected");
     f->f.b.n1 = newId(yytext);
+    lex();
     if(symb!=IN)
       error("IN", "IN expected");
     lex();
