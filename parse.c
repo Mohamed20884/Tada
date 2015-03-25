@@ -236,17 +236,36 @@ NODE * ifComm()
 }
 
  NODE * forComm()
- {  extern NODE * condexp();
-    NODE * w;
-    NODE * c;
-    c = condexp();
+ {  extern NODE * commands();
+    NODE * f;
+    NODE * n;
+    f = newNode(FOR);
     if(symb!=FOR)
-     error("while","DO expected\n");
+     error("for","for expected\n");
     lex();
-    w = newNode(IN);
-    w->f.b.n1 = c;
-    w->f.b.n2 = command();
-    return w;
+    if(symb!=ID)
+      error("ID", "identifier expected");
+    n = newId(yytext);
+    if(symb!=IN)
+      error("IN", "IN expected");
+    lex();
+    if(symb!=INT)
+      error("INT", "INT expected");
+    lex();
+    if(symb!=DOTS)
+      error("DOTS", "DOTS expected");
+    lex();
+    if(symb!=INT)
+      error("INT", "INT expected");
+    lex();
+    if(symb!=LOOP)
+      error("LOOP", "LOOP expected");
+    lex();
+    f->f.b.n1 = commands();
+    if(symb!=ENDLOOP)
+      error("ENDLOOP", "end loop expected");
+    lex();
+    return f;
  }
 
 // NODE * whileComm()
