@@ -9,9 +9,10 @@ IDENT	[a-zA-Z][A-Za-z0-9]*
 
 ";" 			{ return SEMI;}
 ":=" 			{ return ASSIGN;}
-"procedure" 		{ return PROCEDURE;}
+"procedure" 	{ return PROCEDURE;}
 "is" 			{ return IS;}
 "begin"			{ return TBEGIN;}
+"end loop"		{ return ENDLOOP;}
 "end if"		{ return ENDIF;}
 "end"			{ return END;}
 ": Integer"		{ return DEF_INT;}
@@ -21,9 +22,8 @@ IDENT	[a-zA-Z][A-Za-z0-9]*
 "for" 			{ return FOR;}
 "in"  			{ return IN;}
 "loop" 			{ return LOOP;}
-"end loop"		{ return ENDLOOP;}
 "+"  			{return PLUS;}
-"-"			{ return MINUS;}
+"-"				{ return MINUS;}
 "*" 			{ return STAR;}
 "/" 			{ return SLASH;}
 "(" 			{ return LBRA;}

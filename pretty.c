@@ -91,13 +91,49 @@ prettyprint(NODE * t,int d)
    prettytree(t->f.b.n1,d);
 }
 
+prettydef(NODE * t, int d)
+{  spaces(d);
+   printf("DEFS ");
+   prettytree(t->f.b.n1,d);
+}
+
+prettyfor(NODE * t,int d)
+{  spaces(d);
+   printf("FOR ");
+   prettytree(t->f.b.n1);
+   printf(" THEN\n");
+   if(t->f.b.n2->tag==ELSE)
+   {  prettytree(t->f.b.n2->f.b.n1,d);
+      putchar('\n');
+      spaces(d);
+      printf("ELSE\n");
+       prettytree(t->f.b.n2->f.b.n2,d);
+   }
+   else
+    prettytree(t->f.b.n2,d);
+}
+
+prettycommands(NODE * t, int d)
+{
+	spaces(d);
+	printf("COMMANDS ");
+	switch(t->tag)
+	{
+		
+		
+	}
+}
+
+
 prettytree(NODE * t,int d)
 {  switch(t->tag)
    {  case SEMI: prettyseq(t,d);
                  return;
+      case DEFS: prettydef(t,d);
+				 return;
       case ASSIGN: prettyassign(t,d);
                    return; 
-      case IF: prettyif(t,d);
+      case COMMANDS: prettycommands(t,d);
                return;
       case ID: printf("%s",t->f.id);
                return;

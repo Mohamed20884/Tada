@@ -374,10 +374,10 @@ static yyconst flex_int16_t yy_accept[81] =
        17,   32,   19,   29,   32,    1,   22,   32,   26,   30,
        30,   30,   30,   30,   30,   30,   30,   31,   25,   28,
        29,    0,    2,   23,   24,   27,   30,   30,   30,   30,
-       30,    9,   13,    4,   30,   30,   30,    0,   30,   30,
-        7,   12,   30,   30,   30,    0,   30,   11,    0,   14,
-       30,   10,    0,    5,    0,    0,   30,    0,    6,    0,
-       30,    0,    0,   30,    0,   15,   30,    8,    3,    0
+       30,   10,   14,    4,   30,   30,   30,    0,   30,   30,
+        8,   13,   30,   30,   30,    0,   30,   12,    0,   15,
+       30,   11,    0,    5,    0,    0,   30,    0,    7,    0,
+       30,    0,    0,   30,    0,    6,   30,    9,    3,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -795,52 +795,52 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 15 "tada.lex"
-{ return ENDIF;}
+{ return ENDLOOP;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 16 "tada.lex"
-{ return END;}
+{ return ENDIF;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 17 "tada.lex"
-{ return DEF_INT;}
+{ return END;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 18 "tada.lex"
-{ return IF;}
+{ return DEF_INT;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 19 "tada.lex"
-{ return THEN;}
+{ return IF;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 20 "tada.lex"
-{ return ELSE;}
+{ return THEN;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 21 "tada.lex"
-{ return FOR;}
+{ return ELSE;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 22 "tada.lex"
-{ return IN;}
+{ return FOR;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 23 "tada.lex"
-{ return LOOP;}
+{ return IN;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 24 "tada.lex"
-{ return ENDLOOP;}
+{ return LOOP;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP

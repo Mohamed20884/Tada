@@ -16,7 +16,7 @@ extern char * yytext;
 
 lex()
 {  
-   printSymb();
+   //printSymb();
    symb = yylex();
    //printf("\nyytext=%s\n", yytext);
 }
@@ -62,6 +62,7 @@ showTree(NODE * tree,int depth)
       default: printf("%s\n",showSymb(tree->tag));
                showTree(tree->f.b.n1,depth+1);
                showTree(tree->f.b.n2,depth+1);
+               showTree(tree->f.b.n3,depth+1);
    }
 }
 
@@ -75,7 +76,7 @@ NODE * program()
 {  extern NODE * defs();
    extern NODE * commands();
    NODE * p;
-   p = newNode(SEMI);
+   p = newNode(PROCEDURE);
    char * name ;
    if(symb!=PROCEDURE)
       error("procedure", "expected procedure");
@@ -84,7 +85,7 @@ NODE * program()
    if(symb==ID){
       p->f.b.n1 = newId(yytext);
       name=(char *)malloc(strlen(yytext) * sizeof(char));
-      name=yytext;
+      memcpy(name, yytext, strlen(yytext));
    }else{
       error("name", "name expected");
    }
@@ -93,6 +94,7 @@ NODE * program()
       error("is", "is expected");
    
    lex();
+   
    p->f.b.n2 = defs();
    if(symb!=TBEGIN)
       error("begin", "begin expected");
@@ -100,12 +102,13 @@ NODE * program()
    lex();
    p->f.b.n3 = commands();
    if(symb!=END)
-      error("end", "end expected");
+      error("END", "end expected");
   
    lex();
    if(symb!=ID)
 	   error("ID", "name expected");
-   if(strcmp(yytext, name)){
+	   
+   if(!(strcmp(yytext, name))){
 	   
    }else{
       error("name", "correct name expected");
@@ -120,16 +123,17 @@ NODE * program()
 
 NODE * defs()
 {  extern NODE * def();
-   NODE * d = newNode(SEMI);
+   NODE * d = newNode(DEF);
    d = def();
    if(symb==SEMI)
    {  lex();
+	   NODE * d1;
+       d1 = d;
+       d = newNode(DEFS);
+       d->f.b.n1 = d1;
       if(symb==ID)
-      {  NODE * d1;
-         d1 = d;
-         d = newNode(SEMI);
-         d->f.b.n1 = d1;
-         d->f.b.n2 = defs();
+      {
+		  d->f.b.n2 = defs();
       }
    }
    else
@@ -141,11 +145,11 @@ NODE * def()
 {  NODE * d;
    if(symb!=ID)
     error("declaration","ID expected");
+    d->f.b.n1 = newId(yytext);
    lex();
    if(symb!=DEF_INT)
     error("declaration","declaration expected");
-   d = newNode(ID);
-   d->f.b.n1 = newId(yytext);
+   d->f.b.n2 = newNode(DEF_INT);
    lex();
    return d;
 }
@@ -155,12 +159,16 @@ NODE * commands()
    NODE * c;
    c = command();
    if(symb==SEMI)
-   {  NODE * c1;
-      c1 = c;
-      c = newNode(SEMI);
-      c->f.b.n1 = c1;
-      lex();
-      c->f.b.n2 = commands();
+   {  
+	  NODE * c1;
+		  c1 = c;
+		  c = newNode(COMMANDS);
+		  c->f.b.n1 = c1;
+		  c->f.b.n2 = NULL;
+	  lex();
+	  if(symb==ID || symb==IF || symb==FOR){		  
+		  c->f.b.n2 = commands();
+	  }
    }
    return c;
 }
@@ -260,10 +268,10 @@ NODE * ifComm()
       error("LOOP", "LOOP expected");
     lex();
     f->f.b.n1 = commands();
-    lex();
     if(symb!=ENDLOOP)
       error("ENDLOOP", "end loop expected");
     lex();
+	//commands();
     return f;
  }
 

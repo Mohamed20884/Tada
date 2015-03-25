@@ -168,6 +168,8 @@ codetree(NODE * t)
                return;
       case PROCEDURE:
                   return;
+      case DEFS:
+				return;
       case ID: return;
       case IS: codeblock(t->f.b.n1);
       case TBEGIN: codeblock(t->f.b.n2);
@@ -224,6 +226,7 @@ main(int c,char ** argv)
    }
    symb = yylex();
    tree = program();
+   showTree(tree, 0);
    rb = 0;
    rp = 0;
    labno = 0;

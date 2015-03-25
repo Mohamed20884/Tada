@@ -13,7 +13,10 @@ char * showSymb(int symb)
       case  TBEGIN: return "BEGIN";
       case  ELSE: return "ELSE";
       case  END: return "END";
+      case  COMMANDS: return "COMMANDS";
       case  ID: return "ID";
+      case  DEF: return "DEF";
+      case  DEFS: return "DEFS";
       case  IF: return "IF";
       case  ENDIF: return "END IF";
       case  FOR: return "FOR";

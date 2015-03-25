@@ -12,6 +12,9 @@
 #define DOTS 12
 #define LOOP 13
 #define ENDLOOP 14
+#define DEF 15
+#define DEFS 16
+#define COMMANDS 17
 
 
 
