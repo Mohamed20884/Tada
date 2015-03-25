@@ -16,6 +16,11 @@ char * showSymb(int symb)
       case  ID: return "ID";
       case  IF: return "IF";
       case  ENDIF: return "END IF";
+      case  FOR: return "FOR";
+      case  IN: return "IN";
+      case  DOTS: return "..";
+      case  LOOP: return "LOOP";
+      case  ENDLOOP: return "END LOOP";
       case  INT: return "INT";
       case  THEN: return "THEN";         
       case  PLUS: return "+";
