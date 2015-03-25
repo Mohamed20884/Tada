@@ -129,6 +129,8 @@ prettytree(NODE * t,int d)
 {  switch(t->tag)
    {  case SEMI: prettyseq(t,d);
                  return;
+      case DEF:  prettydef(t,d);
+				 return;
       case DEFS: prettydef(t,d);
 				 return;
       case ASSIGN: prettyassign(t,d);

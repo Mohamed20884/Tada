@@ -45,6 +45,7 @@ NODE * newNode(int tag)
    n->tag = tag;
    n->f.b.n1 = NULL;
    n->f.b.n2 = NULL;
+   n->f.b.n3 = NULL;
    return n;
 }
 
@@ -79,7 +80,7 @@ NODE * program()
    p = newNode(PROCEDURE);
    char * name ;
    if(symb!=PROCEDURE)
-      error("procedure", "expected procedure");
+      error("procedure", "procedure expected");
    
    lex();
    if(symb==ID){
@@ -127,12 +128,12 @@ NODE * defs()
    d = def();
    if(symb==SEMI)
    {  lex();
-	   NODE * d1;
+	  NODE * d1;
        d1 = d;
        d = newNode(DEFS);
        d->f.b.n1 = d1;
       if(symb==ID)
-      {
+      { 
 		  d->f.b.n2 = defs();
       }
    }
@@ -257,17 +258,24 @@ NODE * ifComm()
     lex();
     if(symb!=INT)
       error("INT", "INT expected");
+    int id1;
+    id1 = atoi(yytext);
     lex();
     if(symb!=DOTS)
       error("DOTS", "DOTS expected");
     lex();
     if(symb!=INT)
       error("INT", "INT expected");
+    int id2;
+    id2 = atoi(yytext);
     lex();
+    f->f.b.n2 = newNode(DOTS);
+    f->f.b.n2->f.b.n1 = newInt(id1);
+    f->f.b.n2->f.b.n2 = newInt(id2);
     if(symb!=LOOP)
       error("LOOP", "LOOP expected");
     lex();
-    f->f.b.n1 = commands();
+    f->f.b.n3 = commands();
     if(symb!=ENDLOOP)
       error("ENDLOOP", "end loop expected");
     lex();

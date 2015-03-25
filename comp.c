@@ -141,6 +141,25 @@ codeif(NODE * t)
    printf("IFEND%d\n",ln);
 }
 
+codefor(NODE * t)
+{  int ln;
+   ln = labno;
+   labno++;
+   codeexp(0,t->f.b.n1);
+   if(t->f.b.n2->tag==ELSE)
+   {  printf("\tB%s IFALSE%d\n",notComp(t->f.b.n1->tag),ln);
+      codetree(t->f.b.n2->f.b.n1);
+      printf("\tB IFEND%d\n",ln);
+      printf("IFALSE%d\n",ln);
+      codetree(t->f.b.n2->f.b.n2);
+   }
+   else
+   {  printf("\tB%s IFEND%d\n",notComp(t->f.b.n1->tag),ln);
+      codetree(t->f.b.n2);
+   }
+   printf("IFEND%d\n",ln);
+}
+
 
 
 codeblock(NODE * t)
@@ -149,6 +168,7 @@ codeblock(NODE * t)
    rb = rp;
    codetree(t->f.b.n1);
    codetree(t->f.b.n2);
+   codetree(t->f.b.n3);
    rp = rb;
    rb = rb1;
 }
@@ -158,19 +178,37 @@ codetree(NODE * t)
     return;
    switch(t->tag)
    {  
-      case SEMI: codetree(t->f.b.n1);
-                 codetree(t->f.b.n2);
+	  case PROCEDURE: codetree(t->f.b.n1);
+					  codetree(t->f.b.n2);
+					  codetree(t->f.b.n3);
+      //~ case SEMI: codetree(t->f.b.n1);
+                 //~ codetree(t->f.b.n2);
+                 //~ return;
+      case COMMANDS:
+					codetree(t->f.b.n1);
+					 codetree(t->f.b.n2);
+					 
                  return;
       case ASSIGN: codeassign(t);
                    showSource(t);
                    return; 
       case IF: codeif(t);
                return;
-      case PROCEDURE:
-                  return;
-      case DEFS:
+      case FOR: codefor(t);
 				return;
-      case ID: return;
+      case DEFS://showTree(t,0) ;
+				if(t->f.b.n1 != NULL){
+				 codetree(t->f.b.n1);}
+				if(t->f.b.n2 != NULL){
+				 codetree(t->f.b.n2);}
+				 
+				return;
+	  case DEF: codevar(t);
+				return;
+	  case DEF_INT: 
+				return;
+      case ID: 
+				return;
       case IS: codeblock(t->f.b.n1);
       case TBEGIN: codeblock(t->f.b.n2);
                   return;
