@@ -3,6 +3,16 @@ procedure Program is
  y : Integer;
  z : Integer;
 begin
- x := 0;
- y := 1;
+
+ function test;
+  x := 2;
 end Program;
+
+procedure test is
+b : Integer;
+begin
+	b := 2;
+	x := x + b;
+end test;
+
+

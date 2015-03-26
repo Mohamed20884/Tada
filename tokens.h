@@ -15,6 +15,9 @@
 #define DEF 15
 #define DEFS 16
 #define COMMANDS 17
+#define FUNCTION 18
+#define PARAM 19
+#define PARAMS 190
 
 
 
@@ -34,6 +37,8 @@
 #define ASSIGN 34
 #define SEMI 35
 #define DEF_INT 36
+#define INPUT_INT 37
+#define OUTPUT_INT 38
 
 
 

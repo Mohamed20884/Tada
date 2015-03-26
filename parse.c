@@ -16,7 +16,7 @@ extern char * yytext;
 
 lex()
 {  
-   //printSymb();
+   printSymb();
    symb = yylex();
    //printf("\nyytext=%s\n", yytext);
 }
@@ -46,6 +46,7 @@ NODE * newNode(int tag)
    n->f.b.n1 = NULL;
    n->f.b.n2 = NULL;
    n->f.b.n3 = NULL;
+   n->f.b.n4 = NULL;
    return n;
 }
 
@@ -64,6 +65,7 @@ showTree(NODE * tree,int depth)
                showTree(tree->f.b.n1,depth+1);
                showTree(tree->f.b.n2,depth+1);
                showTree(tree->f.b.n3,depth+1);
+               showTree(tree->f.b.n4,depth+1);
    }
 }
 
@@ -76,6 +78,7 @@ error(char * rule,char * message)
 NODE * program()
 {  extern NODE * defs();
    extern NODE * commands();
+   extern NODE * functions();
    NODE * p;
    p = newNode(PROCEDURE);
    char * name ;
@@ -116,9 +119,12 @@ NODE * program()
    }
    lex();
    if(symb==SEMI){
-   }else{
+   }else{  
 		error("SEMI", "; expected");
    }
+   lex();
+   if(symb==PROCEDURE)
+	p->f.b.n3->f.b.n2 = functions();
    return p; 
 }
 
@@ -156,9 +162,9 @@ NODE * def()
 }
 
 NODE * commands()
-{  extern NODE * command();
+{  extern NODE * command(NODE * t);
    NODE * c;
-   c = command();
+   c = command(c);
    if(symb==SEMI)
    {  
 	  NODE * c1;
@@ -168,22 +174,25 @@ NODE * commands()
 		  c->f.b.n2 = NULL;
 	  lex();
 	  if(symb==ID || symb==IF || symb==FOR){		  
-		  c->f.b.n2 = commands();
+		  c->f.b.n2 = commands(c);
 	  }
    }
    return c;
 }
 
-NODE * command()
+NODE * command(NODE * t)
 {  extern NODE * assign();
    extern NODE * ifComm();
    extern NODE * forComm();
+   extern NODE * functionComm();
    switch(symb)
    {  case ID: return assign();
       case IF: lex();
                return ifComm();
       case FOR: lex();
                   return forComm();
+      case FUNCTION: lex();
+					return functionComm(t);
       default: error("command","IF/FOR/identifier expected\n");
    }
 }
@@ -225,13 +234,13 @@ NODE * ifComm()
    if(symb!=THEN)
     error("if","then expected\n");
    lex();
-   t = command();
+   t = command(t);
    lex();
    if(symb==ELSE)
    {  lex();
       c->f.b.n2 = newNode(ELSE);
       c->f.b.n2->f.b.n1 = t;
-      c->f.b.n2->f.b.n2 = command();
+      c->f.b.n2->f.b.n2 = command(c->f.b.n2);
    }
    else
     c->f.b.n2 = t;
@@ -251,13 +260,15 @@ NODE * ifComm()
     f = newNode(FOR);
     if(symb!=ID)
       error("ID", "identifier expected");
-    f->f.b.n1 = newId(yytext);
+    f->f.b.n1 = newNode(ASSIGN);
+    f->f.b.n1->f.b.n1 = newId(yytext);
     lex();
     if(symb!=IN)
       error("IN", "IN expected");
     lex();
     if(symb!=INT)
       error("INT", "INT expected");
+    f->f.b.n1->f.b.n2 = newInt(atoi(yytext));
     int id1;
     id1 = atoi(yytext);
     lex();
@@ -269,20 +280,96 @@ NODE * ifComm()
     int id2;
     id2 = atoi(yytext);
     lex();
-    f->f.b.n2 = newNode(DOTS);
-    f->f.b.n2->f.b.n1 = newInt(id1);
+    if(id1<id2)
+    f->f.b.n2 = newNode(LT);
+    else
+	f->f.b.n2 = newNode(GT);
+    f->f.b.n2->f.b.n1 = newId(f->f.b.n1->f.b.n1->f.id);
     f->f.b.n2->f.b.n2 = newInt(id2);
     if(symb!=LOOP)
       error("LOOP", "LOOP expected");
     lex();
     f->f.b.n3 = commands();
+    f->f.b.n3->f.b.n2 = newNode(COMMANDS);
+    f->f.b.n3->f.b.n2->f.b.n1 = newNode(ASSIGN);
+    f->f.b.n3->f.b.n2->f.b.n1->f.b.n1 = newId(f->f.b.n1->f.b.n1->f.id);
+    if(f->f.b.n2->tag == LT)
+    f->f.b.n3->f.b.n2->f.b.n1->f.b.n2 = newNode(PLUS);
+    if(f->f.b.n2->tag == GT)
+    f->f.b.n3->f.b.n2->f.b.n1->f.b.n2 = newNode(MINUS);
+    f->f.b.n3->f.b.n2->f.b.n1->f.b.n2->f.b.n1 = newId(f->f.b.n1->f.b.n1->f.id);
+    f->f.b.n3->f.b.n2->f.b.n1->f.b.n2->f.b.n2 = newInt(1);
+    
     if(symb!=ENDLOOP)
       error("ENDLOOP", "end loop expected");
     lex();
 	//commands();
     return f;
  }
+NODE * params()
+{  extern NODE * param();
+   NODE * d = newNode(PARAM);
+   d = param();
+   if(symb==ID)
+   {  lex();
+	  NODE * d1;
+       d1 = d;
+       d = newNode(PARAMS);
+       d->f.b.n1 = d1;       
+      if(symb==ID)
+      { 
+		  d->f.b.n2 = params();
+      }
+   }
+   return d;
+}
 
+NODE * param()
+{  NODE * d;
+   if(symb!=ID)
+    error("param","ID expected");
+    d->f.b.n1 = newId(yytext);
+   lex();
+   if(symb==INPUT_INT)
+	d->f.b.n2 = newNode(INPUT_INT);
+	else if (symb==OUTPUT_INT)
+	d->f.b.n2 = newNode(OUTPUT_INT);
+	else
+    error("param","param expected");
+   lex();
+   return d;
+}
+NODE * functionComm(NODE * t)
+{	
+	NODE * fp;
+	fp = newNode(FUNCTION);
+	if(symb!=ID)
+		error("ID", "ID expected");
+	fp->f.b.n1 = newId(yytext);
+	lex();
+	/*if(symb!=LBRA)
+		error("LBRA","( expected");
+	lex();
+	if(symb!=ID)
+		error("PARAMS", "PARAMS expected");
+	fp->f.b.n1 = params();
+	
+	if(symb!=RBRA)
+		error("RBRA",") expected");
+	lex();*/
+	
+	if(symb!=SEMI)
+		error("SEMI", "; expected");
+	return fp;
+}
+
+NODE * functions()
+{
+	NODE * fp;
+	fp = program();
+	
+	
+}
 // NODE * whileComm()
 // {  extern NODE * condexp();
 //    NODE * w;

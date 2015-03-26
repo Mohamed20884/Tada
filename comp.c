@@ -126,7 +126,6 @@ codeif(NODE * t)
 {  int ln;
    ln = labno;
    labno++;
-   codeexp(0,t->f.b.n1);
    if(t->f.b.n2->tag==ELSE)
    {  printf("\tB%s IFALSE%d\n",notComp(t->f.b.n1->tag),ln);
       codetree(t->f.b.n2->f.b.n1);
@@ -145,21 +144,63 @@ codefor(NODE * t)
 {  int ln;
    ln = labno;
    labno++;
-   codeexp(0,t->f.b.n1);
-   if(t->f.b.n2->tag==ELSE)
-   {  printf("\tB%s IFALSE%d\n",notComp(t->f.b.n1->tag),ln);
-      codetree(t->f.b.n2->f.b.n1);
-      printf("\tB IFEND%d\n",ln);
-      printf("IFALSE%d\n",ln);
-      codetree(t->f.b.n2->f.b.n2);
-   }
-   else
-   {  printf("\tB%s IFEND%d\n",notComp(t->f.b.n1->tag),ln);
-      codetree(t->f.b.n2);
-   }
-   printf("IFEND%d\n",ln);
+   //codeexp(0,t->f.b.n1);
+   //char * i;
+   //i = t->f.b.n1->f.b.n2->f.value;
+   
+   codevar(t->f.b.n1);
+   
+   codetree(t->f.b.n1);
+   //codeassign(t->f.b.n1);
+   //codeassign(t->f.b.n2);
+   
+   printf("FLOOP%d\n",ln);
+   codeexp(0,t->f.b.n2);
+   //printf("\tMOV R%d,#0x1\n",0);	//,t->f.b.n2->f.b.n1->f.value);
+   //printf("\tMOV R%d,#0x10\n",10);;
+   //printf("\tCMP R%d,R%d\n",0,10);
+   if(t->f.b.n2->tag==LT)
+   printf("\tBGE FEND%d\n",ln); 
+   if(t->f.b.n2->tag==GT)
+   printf("\tBLE FEND%d\n",ln); 
+   codetree(t->f.b.n3);
+   
+   
+   //printf("\tADD R%d,#0x%x\n",10,1);
+   printf("\tB FLOOP%d\n",ln);
+   printf("FEND%d\n",ln);
+      //codetree(t->f.b.n2->f.b.n2);
+   
 }
 
+/*int codeexp(int RD,NODE * e)
+{  int reg;
+    int RE1;
+    int RE2;
+   switch(e->tag)
+   {  case ID: reg = findvar(e->f.id);
+               if(reg==-1)
+                codeerror(e,"not declared");
+               return reg;
+      case INT: printf("\tMOV R%d,#0x%x\n",RD,e->f.value);
+                return RD;
+   }
+   RE1 = codeexp(E1,e->f.b.n1);
+   // only PUSH if actually register changed
+   if(RE1 == E1 && need_push(e->f.b.n2)){
+     printf("\tPUSH {R%d}\n",E1);
+     RE2 = codeexp(E2,e->f.b.n2);
+     printf("\tPOP {R%d}\n",E1);
+   }else{
+      RE2 = codeexp(E2,e->f.b.n2);
+   }
+   if(isComp(e->tag))
+     printf("\tCMP R%d,R%d\n",RE1,RE2);
+   else
+     printf("\t%s R%d,R%d,R%d\n",showCode(e->tag),RD,RE1,RE2);
+   showSource(e);
+   return RD;
+}*/
 
 
 codeblock(NODE * t)
@@ -172,6 +213,12 @@ codeblock(NODE * t)
    rp = rb;
    rb = rb1;
 }
+
+codefunction(NODE * t)
+{
+	printf("test %s", t->f.b.n1->f.id);
+	//codevar(t->f.b.n1->f.id);
+}
   
 codetree(NODE * t)
 {  if(t==NULL)
@@ -181,12 +228,15 @@ codetree(NODE * t)
 	  case PROCEDURE: codetree(t->f.b.n1);
 					  codetree(t->f.b.n2);
 					  codetree(t->f.b.n3);
+					  codetree(t->f.b.n4);	
+	  case FUNCTION:  codefunction(t);
+					  return;
       //~ case SEMI: codetree(t->f.b.n1);
                  //~ codetree(t->f.b.n2);
                  //~ return;
       case COMMANDS:
 					codetree(t->f.b.n1);
-					 codetree(t->f.b.n2);
+					codetree(t->f.b.n2);
 					 
                  return;
       case ASSIGN: codeassign(t);
