@@ -8,7 +8,10 @@ extern char * yytext;
 char * showSymb(int symb)
 {  switch(symb)
    {  case  PROCEDURE: return "PROCEDURE";
+	  case  PROCEDURES: return "PROCEDURES"; 
 	  case  FUNCTION: return "FUNCTION";
+	  case  CALLFUNCTION: return "CALLFUNCTION";
+	  case  COMMA: return ",";
 	  case  PARAM: return "PARAM";
 	  case  PARAMS: return "PARAMS";
       case  IS: return "IS";

@@ -12,6 +12,9 @@ extern FILE* yyin;
 extern int ch;
 extern char * showSymb(int);
 extern prettytree(NODE *,int);
+extern int * ParameterCount;
+extern int * paramters;
+extern int * functionCount;
 
 #define MAXREG 10
 #define E1 MAXREG+1
@@ -85,13 +88,21 @@ codeerror(NODE * tree,char * message)
 }
 
 codeprog(NODE * t)
-{  printf("\tAREA ASMain,CODE\n");
-   printf("__main\tPROC\n");
-   printf("\tEXPORT __main\n");
+{  
    codeblock(t);
-   printf("PLOOP\tB PLOOP\n");
-   printf("\tENDP\n");
-   printf("\tEND\n");  
+   
+}
+
+codeprogram(NODE * t)
+{
+    printf("\tAREA ASMain,CODE\n");
+    printf("__main\tPROC\n");
+    printf("\tEXPORT __main\n");
+	codetree(t);
+    printf("\tPLOOP	B PLOOP\n");
+	printf("\tENDP\n");
+	printf("\tEND\n");
+
 }
 
 codevar(NODE * t)
@@ -210,16 +221,79 @@ codeblock(NODE * t)
    codetree(t->f.b.n1);
    codetree(t->f.b.n2);
    codetree(t->f.b.n3);
+   codefunction(t->f.b.n4);
    rp = rb;
    rb = rb1;
 }
 
+codefunctioncall(NODE * t)
+{
+	int i = 0;
+	NODE * temp;
+	temp = t->f.b.n2;
+	while(temp!=NULL)
+	{
+		printf("\tPUSH{R%d}\n",findvar(temp->f.b.n1->f.b.n1->f.id));
+		temp = temp->f.b.n2;
+		
+	}
+   //if(findvar(t->f.b.n2->f.b.n2->f.b.n2->f.b.n1->f.b.n1->f.id)!=-1)
+   //printf("\tPUSH{R%d}\n",findvar(t->f.b.n2->f.b.n2->f.b.n2->f.b.n1->f.b.n1->f.id));
+   printf("\tBL %s\n",t->f.b.n1->f.id);
+   
+   //codeblock(t);
+
+	//printf("test %s", t->f.b.n1->f.id);
+	//codevar(t->f.b.n1->f.id);
+
+}
+
+
 codefunction(NODE * t)
 {
-	printf("test %s", t->f.b.n1->f.id);
-	//codevar(t->f.b.n1->f.id);
+   int count = 0; 
+   int a[3];
+   int i = 0;
+   int rb1;
+   rb1 = rb;
+   rb = rp;
+   NODE * test = t;
+   NODE * temp = t->f.b.n2;
+   while(test != NULL)
+   {
+	   count += 1;
+	   test = test->f.b.n2;
+   }
+   count -= 1;
+   //count
+   printf("%s\n",t->f.b.n1->f.id); 
+   codetree(t->f.b.n1);
+   codetree(t->f.b.n2);
+   codetree(t->f.b.n3);
+   while(temp!=NULL)
+   {
+	   a[i] = findvar(temp->f.b.n1->f.b.n1->f.id);
+	   temp = temp->f.b.n2;
+	   i++;
+   }
+   //codetree(t->f.b.n3);
+   int k = i-1;
+   for (k=i-1; k>=0;k--)
+   {
+	   printf("\tPOP{R%d}\n",a[k]);
+   }
+   printf("\tPUSH{LR}\n");
+   codetree(t->f.b.n4);
+   printf("\tPOP{LR}\n");
+   printf("\tBX LR\n");
+   rp = rb;
+   rb = rb1;
+   
+	
 }
-  
+
+
+
 codetree(NODE * t)
 {  if(t==NULL)
     return;
@@ -228,9 +302,12 @@ codetree(NODE * t)
 	  case PROCEDURE: codetree(t->f.b.n1);
 					  codetree(t->f.b.n2);
 					  codetree(t->f.b.n3);
-					  codetree(t->f.b.n4);	
-	  case FUNCTION:  codefunction(t);
+					  codetree(t->f.b.n4);
+	  case PROCEDURES: codetree(t->f.b.n1);
+					 return;	
+	  case CALLFUNCTION:  codefunctioncall(t);
 					  return;
+	  case FUNCTION: codefunction(t); return;
       //~ case SEMI: codetree(t->f.b.n1);
                  //~ codetree(t->f.b.n2);
                  //~ return;
@@ -254,6 +331,15 @@ codetree(NODE * t)
 				 
 				return;
 	  case DEF: codevar(t);
+				return;
+	  case PARAMS://showTree(t,0) ;
+				if(t->f.b.n1 != NULL){
+				 codetree(t->f.b.n1);}
+				if(t->f.b.n2 != NULL){
+				 codetree(t->f.b.n2);}
+				 
+				return;
+	  case PARAM: codevar(t);
 				return;
 	  case DEF_INT: 
 				return;
@@ -318,6 +404,6 @@ main(int c,char ** argv)
    rb = 0;
    rp = 0;
    labno = 0;
-   codeprog(tree);
+   codeprogram(tree);
    fclose(yyin);
 }

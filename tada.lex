@@ -11,6 +11,8 @@ IDENT	[a-zA-Z][A-Za-z0-9]*
 ":=" 			{ return ASSIGN;}
 "procedure" 	{ return PROCEDURE;}
 "function"		{ return FUNCTION;}
+","				{ return COMMA;}
+"call_function" { return CALLFUNCTION;}
 "is" 			{ return IS;}
 "begin"			{ return TBEGIN;}
 "end loop"		{ return ENDLOOP;}

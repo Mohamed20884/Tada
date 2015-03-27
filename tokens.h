@@ -16,11 +16,14 @@
 #define DEFS 16
 #define COMMANDS 17
 #define FUNCTION 18
+#define CALLFUNCTION 195
 #define PARAM 19
+#define MAIN 191
+#define PROCEDURES 192
 #define PARAMS 190
 
 
-
+#define COMMA 200
 #define ID 20
 #define PLUS 22
 #define MINUS 23
