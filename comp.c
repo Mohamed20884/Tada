@@ -184,35 +184,6 @@ codefor(NODE * t)
    
 }
 
-/*int codeexp(int RD,NODE * e)
-{  int reg;
-    int RE1;
-    int RE2;
-   switch(e->tag)
-   {  case ID: reg = findvar(e->f.id);
-               if(reg==-1)
-                codeerror(e,"not declared");
-               return reg;
-      case INT: printf("\tMOV R%d,#0x%x\n",RD,e->f.value);
-                return RD;
-   }
-   RE1 = codeexp(E1,e->f.b.n1);
-   // only PUSH if actually register changed
-   if(RE1 == E1 && need_push(e->f.b.n2)){
-     printf("\tPUSH {R%d}\n",E1);
-     RE2 = codeexp(E2,e->f.b.n2);
-     printf("\tPOP {R%d}\n",E1);
-   }else{
-      RE2 = codeexp(E2,e->f.b.n2);
-   }
-   if(isComp(e->tag))
-     printf("\tCMP R%d,R%d\n",RE1,RE2);
-   else
-     printf("\t%s R%d,R%d,R%d\n",showCode(e->tag),RD,RE1,RE2);
-   showSource(e);
-   return RD;
-}*/
-
 
 codeblock(NODE * t)
 {  int rb1;
@@ -226,34 +197,54 @@ codeblock(NODE * t)
    rb = rb1;
 }
 
+functionblock(NODE * t)
+{  int rb1;
+   rb1 = rb;
+   rb = rp;
+   printf("%s\n", t->f.b.n1->f.id);
+   codetree(t->f.b.n1);
+   codetree(t->f.b.n2);
+   codetree(t->f.b.n3);
+   rp = rb;
+   rb = rb1;
+}
+
+int * function_paramter_count;
+char ** function_name;
+int a = 0;
+int c = 0;
 codefunctioncall(NODE * t)
 {
-	int i = 0;
+	
 	NODE * temp;
+	function_name = (char *)malloc(strlen(t->f.b.n1->f.id) * sizeof(char));
+	function_name[a] = t->f.b.n1->f.id;
 	temp = t->f.b.n2;
 	while(temp!=NULL)
 	{
+		c++;	
 		printf("\tPUSH{R%d}\n",findvar(temp->f.b.n1->f.b.n1->f.id));
 		temp = temp->f.b.n2;
 		
 	}
-   //if(findvar(t->f.b.n2->f.b.n2->f.b.n2->f.b.n1->f.b.n1->f.id)!=-1)
-   //printf("\tPUSH{R%d}\n",findvar(t->f.b.n2->f.b.n2->f.b.n2->f.b.n1->f.b.n1->f.id));
+   function_paramter_count = (int *)malloc(sizeof(int));
+   function_paramter_count[a] = c;
    printf("\tBL %s\n",t->f.b.n1->f.id);
-   
-   //codeblock(t);
-
-	//printf("test %s", t->f.b.n1->f.id);
-	//codevar(t->f.b.n1->f.id);
-
+   temp = t->f.b.n2;
+	while(temp!=NULL)
+	{
+		printf("\tPOP{R%d}\n",findvar(temp->f.b.n1->f.b.n1->f.id));
+		temp = temp->f.b.n2;
+		
+	}
 }
 
 
 codefunction(NODE * t)
 {
-   int count = 0; 
-   int a[3];
+   int count = 0;
    int i = 0;
+   int a[3];
    int rb1;
    rb1 = rb;
    rb = rp;
@@ -265,18 +256,27 @@ codefunction(NODE * t)
 	   test = test->f.b.n2;
    }
    count -= 1;
-   //count
-   printf("%s\n",t->f.b.n1->f.id); 
-   codetree(t->f.b.n1);
-   codetree(t->f.b.n2);
-   codetree(t->f.b.n3);
+   int j = 0;
+   for (j; j < count; j++)
+   {
+		if(t->f.b.n1->f.id != NULL && function_name[j] != NULL && function_paramter_count[j] != NULL)
+		{
+		   if(!(strcmp(function_name[j], t->f.b.n1->f.id)))
+			{
+				if(count != function_paramter_count[j])
+					error("FUNCTION","FUNCTION PARAMETERS WRONG");
+			}
+		}
+   }
+   
+   functionblock(t);
    while(temp!=NULL)
    {
 	   a[i] = findvar(temp->f.b.n1->f.b.n1->f.id);
 	   temp = temp->f.b.n2;
 	   i++;
    }
-   //codetree(t->f.b.n3);
+   codetree(t->f.b.n3);
    int k = i-1;
    for (k=i-1; k>=0;k--)
    {
