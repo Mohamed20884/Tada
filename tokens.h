@@ -21,6 +21,12 @@
 #define MAIN 191
 #define PROCEDURES 192
 #define PARAMS 190
+#define OTHERS 85
+#define ENDCASE 86
+#define CASE 87
+#define WHEN 88
+#define EXIT 89
+#define ARROWRIGHT 291
 
 
 #define COMMA 200

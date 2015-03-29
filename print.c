@@ -12,6 +12,10 @@ char * showSymb(int symb)
 	  case  FUNCTION: return "FUNCTION";
 	  case  CALLFUNCTION: return "CALLFUNCTION";
 	  case  COMMA: return ",";
+	  case CASE: return "CASE";
+	  case ENDCASE: return "ENDCASE";
+	  case WHEN: return "WHEN";
+	  case EXIT: return "EXIT";
 	  case  PARAM: return "PARAM";
 	  case  PARAMS: return "PARAMS";
       case  IS: return "IS";
@@ -47,6 +51,7 @@ char * showSymb(int symb)
       case  GTE: return ">=";
       case  GT: return ">";
       case  ASSIGN: return ":=";
+      case ARROWRIGHT: return "=>";
       case SEMI: return ";";
       case EOF: return "EOF";
       default: printf("bad symbol: %d",symb);

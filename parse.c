@@ -245,7 +245,7 @@ NODE * commands()
 		  c->f.b.n1 = c1;
 		  c->f.b.n2 = NULL;
 	  lex();
-	  if(symb==ID || symb==IF || symb==FOR || symb==CALLFUNCTION){		  
+	  if(symb==ID || symb==IF || symb==FOR || symb==CALLFUNCTION || symb==CASE){		  
 		  c->f.b.n2 = commands(c);
 	  }
    }
@@ -256,6 +256,7 @@ NODE * command(NODE * t)
 {  extern NODE * assign();
    extern NODE * ifComm();
    extern NODE * forComm();
+   extern NODE * caseComm();
    extern NODE * callfunctionComm();
    switch(symb)
    {  case ID: return assign();
@@ -265,10 +266,49 @@ NODE * command(NODE * t)
                   return forComm();
       case CALLFUNCTION: lex();
 					return callfunctionComm(t);
+	  case CASE: lex();
+				  return caseComm();
       default: error("command","IF/FOR/identifier expected\n");
    }
 }
 
+
+NODE *caseComm() {
+  extern NODE *base();
+  extern NODE *condexp();
+  NODE *c, *id, *cur;
+  cur = NULL;
+  id = base();
+  if (symb != IS)
+    error("case", "is expected");
+  lex();
+  while (symb == WHEN) {
+    lex();
+    if(cur) {
+      cur->f.b.n3 = newNode(symb == OTHERS ? OTHERS : CASE);
+      cur = cur->f.b.n3;
+    } else {
+      c = cur = newNode(symb == OTHERS ? OTHERS : CASE);
+    }
+    if(cur->tag != OTHERS) {
+      cur->f.b.n1 = newNode(EQ);
+      cur->f.b.n1->f.b.n1 = id;
+      cur->f.b.n1->f.b.n2 = base();
+    } else
+      lex();
+    if(symb != ARROWRIGHT)
+      error("case", "=> expected");
+    lex();
+    if(cur->tag == OTHERS) {
+      cur->f.b.n3 = commands();
+    } else
+      cur->f.b.n2 = commands();
+  }
+  if (symb != ENDCASE)
+    error("case", "end case expected");
+  lex();
+  return c;
+}
 // NODE * repeatComm()
 // {  extern NODE * condexp(); 
 //    NODE *c;

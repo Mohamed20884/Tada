@@ -292,6 +292,28 @@ codefunction(NODE * t)
 	
 }
 
+codecase(NODE *t) {
+  int ln;
+  int cs = 0;
+  ln = labno;
+  labno++;
+
+  while(t && t->tag != OTHERS) {
+    codeexp(0, t->f.b.n1);
+    printf("\tB%s CASE%dF%d\n", notComp(EQ), ln, cs);
+    codetree(t->f.b.n2);
+    printf("\tB CASE%dEND\n", ln);
+    printf("CASE%dF%d\n", ln, cs);
+    t = t->f.b.n3; 
+    ++cs;
+  }
+  // others
+  if(t) {
+    codetree(t->f.b.n1);
+    t = t->f.b.n3; 
+  }
+  printf("CASE%dEND\n", ln);
+}
 
 
 codetree(NODE * t)
@@ -344,6 +366,8 @@ codetree(NODE * t)
 	  case DEF_INT: 
 				return;
       case ID: 
+				return;
+	  case CASE: codecase(t);
 				return;
       case IS: codeblock(t->f.b.n1);
       case TBEGIN: codeblock(t->f.b.n2);

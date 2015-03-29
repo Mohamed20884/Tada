@@ -14,6 +14,11 @@ IDENT	[a-zA-Z][A-Za-z0-9]*
 ","				{ return COMMA;}
 "call_function" { return CALLFUNCTION;}
 "is" 			{ return IS;}
+"case"        	{ return CASE;}
+"end case"    	{ return ENDCASE;}
+"when"        	{ return WHEN;}
+"exit"        	{ return EXIT;}
+"=>"          	{ return ARROWRIGHT;}
 "begin"			{ return TBEGIN;}
 "end loop"		{ return ENDLOOP;}
 "end if"		{ return ENDIF;}
